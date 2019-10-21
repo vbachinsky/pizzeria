@@ -17,17 +17,41 @@ class Dough(BaseModel):
 	dough_description = CharField(null = False, max_length = 50)
 	dough_price = FloatField(default=None)
 
+	def add_dough(description, price):
+		row = Dough(dough_description = description, dough_price = price)
+		row.save()
+
+	def find_all_doughs():
+		return Dough.select()
+
+	def find_dough(dough_id):
+		return Dough.get(Dough.id == dough_id)
+
 
 class Topping(BaseModel):
 	id = IntegerField(null = False, primary_key = True)
 	topping_description = CharField(null = False, max_length = 50)
 	topping_price = FloatField(default=None)
 
+	def add_topping(description, price):
+		row = Topping(topping_description = description, topping_price = price)
+		row.save()
+
+	def find_all_toppings():
+		return Topping.select()
+
+	def find_topping(topping_id):
+		return Topping.get(Topping.id == topping_id)
+
 
 class Ordered_toppings(BaseModel):
 	id = IntegerField(null = False, primary_key = True)
 	name_of_your_order = CharField(max_length = 200, default = 'order')
 	topping_id = ForeignKeyField(Topping, on_delete = 'CASCADE')
+
+	def set_ordered_toppings(name_of_your_order, topping_id):
+		row = Ordered_toppings(name_of_your_order = name_of_your_order, topping_id = topping_id)
+		row.save()
 
 
 class Pizza(BaseModel):
@@ -42,11 +66,26 @@ class Snacks(BaseModel):
 	snacks_description = CharField(null = False, max_length = 50)
 	snacks_price = FloatField(default=None)
 
+	def add_snacks(description, price):
+		row = Snacks(snacks_description = description, snacks_price = price)
+		row.save()
+
+	def find_all_snacks():
+		return Snacks.select()
+
+	def find_snack(snacks_id):
+		return Snacks.get(Snacks.id == snacks_id)
+
 
 class Ordered_snacks(BaseModel):
 	id = IntegerField(null = False, primary_key = True)
 	name_of_your_order = CharField(max_length = 200, default = 'order')
 	snacks_id = ForeignKeyField(Snacks, on_delete = 'CASCADE')
+
+	def set_list_ordered_snacks(list_ordered_snacks, snacks_id):
+		row = Ordered_snacks(name_of_your_order = list_ordered_snacks, snacks_id = snacks_id)
+		row.save()
+
 
 
 class Order(BaseModel):
@@ -60,6 +99,11 @@ class Order(BaseModel):
 class Order_payment(BaseModel):
 	id = IntegerField(null = False, primary_key = True)
 	transaction_id = IntegerField()
+
+	def set_transaction(transaction_id):
+		row = Order_payment(transaction_id = transaction_id)
+		row.save()
+
 
 
 class Person(BaseModel):
@@ -89,6 +133,9 @@ class Employee(BaseModel):
 	employee_tax_id = FloatField(default=None)
 	employee_job_category = CharField(max_length = 100)
 
+	def find_all_employes():
+		return Employee.select()
+
 
 class Client_transaction(BaseModel):
 	id = IntegerField(null = False, primary_key = True)
@@ -96,3 +143,7 @@ class Client_transaction(BaseModel):
 	employee_id = ForeignKeyField(Employee, on_delete = 'CASCADE')
 	transaction_date = DateTimeField(default = datetime.datetime.now())
 	sales_tax = FloatField(default = 0.05)
+
+	def set_client_transaction(client_account_id, employee_id):
+		row = Client_transaction(client_account_id = client_account_id, employee_id = employee_id)
+		row.save()

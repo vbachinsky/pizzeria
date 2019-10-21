@@ -7,40 +7,6 @@ from models import *
 	console interface for pizzeria.
 """
 
-def add_dough(description, price):
-	row = Dough(dough_description = description, dough_price = price)
-	row.save()
-
-def find_all_doughs():
-	return Dough.select()
-
-def find_dough(dough_id):
-	return Dough.get(Dough.id == dough_id)
-
-def add_topping(description, price):
-	row = Topping(topping_description = description, topping_price = price)
-	row.save()
-
-def find_all_toppings():
-	return Topping.select()
-
-def find_topping(topping_id):
-	return Topping.get(Topping.id == topping_id)
-
-def add_snacks(description, price):
-	row = Snacks(snacks_description = description, snacks_price = price)
-	row.save()
-
-def find_all_snacks():
-	return Snacks.select()
-
-def find_snack(snacks_id):
-	return Snacks.get(Snacks.id == snacks_id)
-
-def set_ordered_toppings(name_of_your_order, topping_id):
-	row = Ordered_toppings(name_of_your_order = name_of_your_order, topping_id = topping_id)
-	row.save()
-
 def pizza_construct(dough_id, name_of_your_order):
 	dough = Dough.select().where(Dough.id == dough_id).get()
 	title = str(dough.dough_description) + ' '
@@ -49,10 +15,6 @@ def pizza_construct(dough_id, name_of_your_order):
 	row = Pizza(dough_id = dough_id, list_ordered_toppings = name_of_your_order, pizza_title = title)
 	row.save()
 	return Pizza.get(Pizza.list_ordered_toppings == name_of_your_order)
-
-def set_list_ordered_snacks(list_ordered_snacks, snacks_id):
-	row = Ordered_snacks(name_of_your_order = list_ordered_snacks, snacks_id = snacks_id)
-	row.save()
 
 def set_order(pizza_id, name_of_your_order):
 	dough = Dough.select().join(Pizza).where(Pizza.id == pizza_id).get()
@@ -64,10 +26,6 @@ def set_order(pizza_id, name_of_your_order):
 	row = Order(pizza_id = pizza_id, list_ordered_snacks = name_of_your_order, price_order = price)
 	row.save()
 	return Order.get(Order.list_ordered_snacks == name_of_your_order)
-
-def set_transaction(transaction_id):
-	row = Order_payment(transaction_id = transaction_id)
-	row.save()
 
 def set_person(f_name, l_name, adress, phone):
 	row = Person(first_name = f_name, last_name = l_name, adress = adress, phone = phone)
@@ -86,16 +44,9 @@ def set_employee(employee_tax_id, employee_job_category, person_id):
 	row = Employee(employee_tax_id = employee_tax_id, employee_job_category = employee_job_category, person_id = person_id)
 	row.save()
 
-def find_all_employes():
-	return Employee.select()
-
 def find_employee(employee_id):
 	employee = Employee.get(Employee.id == employee_id)
 	return Person.get(Person.id == employee.id)
-
-def set_client_transaction(client_account_id, employee_id):
-	row = Client_transaction(client_account_id = client_account_id, employee_id = employee_id)
-	row.save()
 
 def check_correct_value(choise_of_option, diapason_of_choice, correction_variable):
 	while True:
@@ -159,7 +110,7 @@ def main():
 					if make_dough == "Да" or make_dough == "да":
 						dough_description = input("Какое тесто готовим?")
 						dough_price = input("по какой цене тесто?")
-						add_dough(dough_description, dough_price)
+						Dough.add_dough(dough_description, dough_price)
 					else:
 						break
 				while True:
@@ -167,7 +118,7 @@ def main():
 					if make_topping == "Да" or make_topping == "да":
 						topping_description = input("Какой топпинг будем готовить? ")
 						topping_price = input("По какой цене? ")
-						add_topping(topping_description, topping_price)
+						Topping.add_topping(topping_description, topping_price)
 					else:
 						break
 				while  True:
@@ -175,7 +126,7 @@ def main():
 					if make_snacks == "Да" or make_snacks == "да":
 						snacks_description = input("Какой закусон делаем? ")
 						snacks_price = input("По какой цене? ")
-						add_snacks(snacks_description, snacks_price)
+						Snacks.add_snacks(snacks_description, snacks_price)
 					else:
 						break
 
@@ -183,7 +134,7 @@ def main():
 				print("Добро пожаловать в хычинную 'У Ашота'. Здась Вас встретят вежливые официянты и накормят вкусной пиццей. Вкуснейшей на всей Малой Арнаутской!!!")
 				name_of_your_order = input("Введите имя вашего заказа и ожидайте его выполнения: ")				
 
-				doughs = find_all_doughs()
+				doughs = Dough.find_all_doughs()
 				dough_list = []
 				for dough in doughs:
 					dough_list.append({
@@ -195,11 +146,11 @@ def main():
 				while True:
 					dough_id = input("Введите ID понравившегося коржа: ")
 					if not check_correct_value(dough_id, len(dough_list), True):
-						choised_dough = find_dough(dough_id)
+						choised_dough = Dough.find_dough(dough_id)
 						print('Вы выбрали корж: ', choised_dough.dough_description)
 						break
 
-				toppings = find_all_toppings()
+				toppings = Topping.find_all_toppings()
 				toppings_list = []
 				for topping in toppings:
 					toppings_list.append({
@@ -211,16 +162,16 @@ def main():
 				while True:
 					topping_id = input("Введите ID понравившегося топпинга или что-либо другое для выхода из меню выбора: ")
 					if not check_correct_value(topping_id, len(toppings_list), False):
-						choised_topping = find_topping(topping_id)
+						choised_topping = Topping.find_topping(topping_id)
 						print("Вы выбрали топпинг: ", choised_topping.topping_description)
-						set_ordered_toppings(name_of_your_order, choised_topping.id)
+						Ordered_toppings.set_ordered_toppings(name_of_your_order, choised_topping.id)
 					else:
 						break
 
 				pizza = pizza_construct(dough_id, name_of_your_order)
 				print("Вы собрали замечательную пиццу: ", pizza.pizza_title)
 
-				snacks = find_all_snacks()
+				snacks = Snacks.find_all_snacks()
 				snacks_list = []
 				for snack in snacks:
 					snacks_list.append({
@@ -232,19 +183,19 @@ def main():
 				while  True:
 					snack_id = input("Введите ID понравившегося закусона или что-то другое для выхода из меню выбора: ")
 					if not check_correct_value(snack_id, len(snacks_list), False):
-						choised_snack = find_snack(snack_id)
+						choised_snack = Snacks.find_snack(snack_id)
 						print("Вы выбрали закусон: ", choised_snack.snacks_description)
-						set_list_ordered_snacks(name_of_your_order, choised_snack.id)
+						Ordered_snacks.set_list_ordered_snacks(name_of_your_order, choised_snack.id)
 					else:
 						break
 
 				you_order = set_order(pizza.id, name_of_your_order)
 				print("Спасибо за покупку. С вас: ", you_order.price_order, " Кушайт, не обляпайтесь ))")
-				your_waiter = find_employee(random.randint(1, len(find_all_employes())))
+				your_waiter = find_employee(random.randint(1, len(Employee.find_all_employes())))
 
 				print("Вас обслуживал официант: ", your_waiter.first_name, '\n')
 
-				set_transaction(random.randint(1, 1000000))
+				Order_payment.set_transaction(random.randint(1, 1000000))
 
 
 
